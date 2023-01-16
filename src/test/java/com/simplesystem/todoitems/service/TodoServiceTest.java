@@ -13,12 +13,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.simplesystem.todoitems.helper.Todos.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -27,6 +28,9 @@ class TodoServiceTest {
 
     @Mock
     private TodoRepository todoRepository;
+
+    @Spy
+    private Todos todos;
 
     @InjectMocks
     private TodoService todoService;
@@ -37,10 +41,10 @@ class TodoServiceTest {
 
     @Test
     void save_validItem_shouldSaveItem() {
-        Todo item = Todos.anItem();
+        Todo item = anItem();
         when(todoRepository.save(item)).thenReturn(item);
 
-        Todo savedItem = todoService.save(item);
+        Todo savedItem = todoService.add(item);
 
         assertNotNull(savedItem);
         assertSame(item, savedItem);
@@ -49,18 +53,18 @@ class TodoServiceTest {
 
     @Test
     void save_expiredDueDate_shouldThrowInvalidDateException() {
-        Todo invalidItem = Todos.anInvalidItem();
+        Todo invalidItem = anInvalidItem();
 
-        assertThrows(InvalidDateException.class, () -> todoService.save(invalidItem));
+        assertThrows(InvalidDateException.class, () -> todoService.add(invalidItem));
 
         verify(todoRepository, never()).save(invalidItem);
     }
 
     @Test
     void save_pastDueItem_shouldThrowInvalidDataException() {
-        Todo pastDueItem = Todos.pastDueItem();
+        Todo pastDueItem = pastDueItem();
 
-        assertThrows(InvalidDataException.class, () -> todoService.save(pastDueItem));
+        assertThrows(InvalidDataException.class, () -> todoService.add(pastDueItem));
 
         verify(todoRepository, never()).save(pastDueItem);
     }
@@ -68,7 +72,7 @@ class TodoServiceTest {
     @Test
     void findById_itemFound_shouldReturnItem() {
         Long itemId = 1L;
-        Todo item = Todos.anItem();
+        Todo item = anItem();
         when(todoRepository.findById(itemId)).thenReturn(Optional.of(item));
 
         Optional<Todo> itemFound = todoService.findById(itemId);
@@ -81,7 +85,6 @@ class TodoServiceTest {
     @Test
     void findById_itemNotFound_shouldThrowItemNotFoundException() {
         Long itemId = 99L;
-        when(todoRepository.findById(itemId)).thenReturn(Optional.empty());
 
         assertThrows(ItemNotFoundException.class, () -> todoService.findById(itemId));
 
@@ -91,7 +94,7 @@ class TodoServiceTest {
     @Test
     void deleteById_idExists_shouldDeleteItem() {
         long itemId = 1L;
-        Todo validItem = Todos.anItem();
+        Todo validItem = anItem();
         when(todoRepository.findById(itemId)).thenReturn(Optional.ofNullable(validItem));
 
         todoService.deleteById(itemId);
@@ -102,8 +105,7 @@ class TodoServiceTest {
     @Test
     void deleteById_idNotExists_shouldThrowItemNotFoundException() {
         Long invalidItemId = 1000L;
-        Todo invalidItem = Todos.anInvalidItem();
-        when(todoRepository.findById(invalidItemId)).thenReturn(Optional.empty());
+        Todo invalidItem = anInvalidItem();
 
         assertThrows(ItemNotFoundException.class, () -> todoService.deleteById(invalidItemId));
 
@@ -113,7 +115,7 @@ class TodoServiceTest {
     @Test
     void findByStatus_validStatus_shouldReturnItemsByStatus() {
         int notDone = TodoStatus.NOT_DONE.getValue();
-        List<Todo> itemsByStatus = Todos.listOfItems();
+        List<Todo> itemsByStatus = listOfItems();
         when(todoService.findByStatus(notDone)).thenReturn(itemsByStatus);
 
         List<Todo> itemsFound = todoService.findByStatus(notDone);
@@ -134,10 +136,10 @@ class TodoServiceTest {
     @Test
     void update_invalidId_shouldThrowItemNotFoundException() {
         Long invalidId = -1L;
-        Todo invalidItem = Todos.anInvalidItem();
+        Todo invalidItem = anInvalidItem();
 
-        assertThrows(ItemNotFoundException.class, ()-> todoService.update(invalidId));
+        assertThrows(ItemNotFoundException.class, () -> todoService.update(invalidId, invalidItem));
 
-        verify(todoRepository,never()).save(invalidItem);
+        verify(todoRepository, never()).save(invalidItem);
     }
 }

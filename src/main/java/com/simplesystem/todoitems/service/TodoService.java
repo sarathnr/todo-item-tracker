@@ -24,8 +24,8 @@ public class TodoService {
                 .orElseThrow(() -> new ItemNotFoundException(String.format("Item with id: %s not found", id))));
     }
 
-    public Todo save(Todo item) {
-        rncheckIsValid(item);
+    public Todo add(Todo item) {
+        checkIsValid(item);
         return todoRepository.save(item);
     }
 
@@ -62,10 +62,27 @@ public class TodoService {
         }
     }
 
-    public Todo update(Long itemId) {
-        Todo item = todoRepository.findById(itemId)
+    public Todo update(Long itemId, Todo latest) {
+        Todo itemFound = todoRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException(String.format("Todo with id  %s  not found", itemId)));
 
-        return todoRepository.save(item);
+        Todo updatedItem = mapUpdates(latest, itemFound);
+
+        return todoRepository.save(updatedItem);
+    }
+
+    private Todo mapUpdates(Todo latest, Todo itemFound) {
+
+        itemFound.setDescription(latest.getDescription());
+        itemFound.setDueDate(latest.getDueDate());
+
+        if (latest.getStatus() == TodoStatus.DONE) {
+            itemFound.setCompletedAt(LocalDateTime.now());
+            itemFound.setStatus(TodoStatus.DONE);
+        } else {
+            itemFound.setCompletedAt(null);
+            itemFound.setStatus(TodoStatus.NOT_DONE);
+        }
+        return itemFound;
     }
 }

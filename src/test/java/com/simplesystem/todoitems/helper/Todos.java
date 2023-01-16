@@ -1,6 +1,7 @@
 package com.simplesystem.todoitems.helper;
 
 import com.simplesystem.todoitems.dao.entity.Todo;
+import com.simplesystem.todoitems.dto.TodoDto;
 import com.simplesystem.todoitems.enums.TodoStatus;
 
 import java.time.LocalDateTime;
@@ -49,5 +50,13 @@ public class Todos {
                 .withStatus(TodoStatus.NOT_DONE)
                 .withCreatedAt(LocalDateTime.now()).build();
         return List.of(itemForJan, itemForFeb);
+    }
+
+    public static TodoDto anItemDto() {
+        return TodoDto.anItemDto()
+                .withDescription("Finish reading book")
+                .withDueDate(LocalDateTime.now().plusDays(3L))
+                .withStatus(TodoStatus.NOT_DONE)
+                .withCreatedAt(LocalDateTime.now()).build();
     }
 }
