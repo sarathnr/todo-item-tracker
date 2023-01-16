@@ -66,24 +66,6 @@ class TodoServiceTest {
     }
 
     @Test
-    void isExpired_validDate_shouldReturnTrue() {
-        LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
-
-        boolean result = todoService.isExpired(yesterday);
-
-        assertTrue(result);
-    }
-
-    @Test
-    void isExpired_ExpiredDate_shouldReturnFalse() {
-        LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
-
-        boolean result = todoService.isExpired(tomorrow);
-
-        assertFalse(result);
-    }
-
-    @Test
     void findById_itemFound_shouldReturnItem() {
         Long itemId = 1L;
         Todo item = Todos.anItem();
@@ -147,5 +129,15 @@ class TodoServiceTest {
         assertThrows(InvalidDataException.class, () -> todoService.findByStatus(invalidStatus));
 
         verify(todoRepository, never()).findByStatus(TodoStatus.fromOrdinal(invalidStatus));
+    }
+
+    @Test
+    void update_invalidId_shouldThrowItemNotFoundException() {
+        Long invalidId = -1L;
+        Todo invalidItem = Todos.anInvalidItem();
+
+        assertThrows(ItemNotFoundException.class, ()-> todoService.update(invalidId));
+
+        verify(todoRepository,never()).save(invalidItem);
     }
 }

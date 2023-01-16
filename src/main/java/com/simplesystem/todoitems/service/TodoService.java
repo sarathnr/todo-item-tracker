@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,33 +25,16 @@ public class TodoService {
     }
 
     public Todo save(Todo item) {
-        if (isExpired(item.getDueDate())) {
-            throw new InvalidDateException("Due date cannot be an expired date");
-        }
-
-        if (hasPastDue(item.getStatus())) {
-            throw new InvalidDataException(String.format("Cannot save item %s status", item.getStatus()));
-        }
+        rncheckIsValid(item);
         return todoRepository.save(item);
     }
 
-    public static boolean isExpired(LocalDateTime dueDate) {
+    private static boolean isExpired(LocalDateTime dueDate) {
         return dueDate.isBefore(LocalDateTime.now());
     }
 
-    public boolean hasPastDue(TodoStatus status) {
+    private boolean hasPastDue(TodoStatus status) {
         return TodoStatus.PAST_DUE == status;
-    }
-
-    public List<Todo> findBy(int status, boolean all) {
-
-        if (all) {
-            return todoRepository.findAll();
-        }
-        TodoStatus optedStatus = TodoStatus.fromOrdinal(status);
-        return todoRepository.findAll().stream()
-                .filter(t -> t.getStatus() == optedStatus)
-                .collect(Collectors.toList());
     }
 
     public void deleteById(Long itemId) {
@@ -67,5 +49,23 @@ public class TodoService {
             throw new InvalidDataException(String.format("Invalid status requested - %s", status));
 
         return todoRepository.findByStatus(todoStatus);
+    }
+
+    private void checkIsValid(Todo item) {
+
+        if (isExpired(item.getDueDate())) {
+            throw new InvalidDateException("Due date cannot be an expired date");
+        }
+
+        if (hasPastDue(item.getStatus())) {
+            throw new InvalidDataException(String.format("Cannot save item %s status", item.getStatus()));
+        }
+    }
+
+    public Todo update(Long itemId) {
+        Todo item = todoRepository.findById(itemId)
+                .orElseThrow(() -> new ItemNotFoundException(String.format("Todo with id  %s  not found", itemId)));
+
+        return todoRepository.save(item);
     }
 }
