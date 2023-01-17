@@ -1,6 +1,8 @@
 package com.simplesystem.todoitems.enums;
 
-import java.util.Arrays;
+import com.simplesystem.todoitems.exception.InvalidDataException;
+
+import java.util.Optional;
 
 public enum TodoStatus {
     DONE(0),
@@ -17,10 +19,13 @@ public enum TodoStatus {
         return value;
     }
 
-    public static TodoStatus fromOrdinal(int status) {
-        return Arrays.stream(TodoStatus.values())
-                .filter(o -> o.getValue() == status)
-                .findFirst()
-                .orElse(null);
+    public static TodoStatus fromOrdinal(Integer status) {
+        Optional<Integer> requested = Optional.ofNullable(status);
+        return switch (requested.orElseThrow(() -> new InvalidDataException("Invalid status requested"))) {
+            case 1 -> TodoStatus.NOT_DONE;
+            case 2 -> TodoStatus.DONE;
+            case 3 -> TodoStatus.PAST_DUE;
+            default -> throw new InvalidDataException("Invalid status requested");
+        };
     }
 }

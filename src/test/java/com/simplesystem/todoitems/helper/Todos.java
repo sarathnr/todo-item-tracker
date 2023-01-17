@@ -27,6 +27,15 @@ public class Todos {
                 .withCreatedAt(LocalDateTime.now()).build();
     }
 
+    public static TodoDto anInvalidItemDto() {
+        return TodoDto.anItemDto()
+                .withId(1000L)
+                .withDescription("Visit friends")
+                .withDueDate(LocalDateTime.now().minusDays(1L))
+                .withStatus(TodoStatus.PAST_DUE)
+                .withCreatedAt(LocalDateTime.now()).build();
+    }
+
     public static Todo pastDueItem() {
         return Todo.anItem()
                 .withId(1L)
