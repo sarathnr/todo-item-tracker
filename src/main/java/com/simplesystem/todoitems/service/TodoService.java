@@ -27,6 +27,10 @@ public class TodoService {
 
     public Todo saveTodo(Todo item) {
 
+        if(item.getStatus() == TodoStatus.DONE){
+            throw new IllegalArgumentException("Todo status must be NOT_DONE");
+        }
+
         checkIsValid(item);
 
         return save(item);
