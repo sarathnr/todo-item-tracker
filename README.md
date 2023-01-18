@@ -44,3 +44,12 @@ The below tests are available in the `src/test` folder
 - Unit tests of TodoService
 - Integration test for TodoController
 - JPA test for TodoRepository
+
+### Assumptions
+
+- An item should always have a description
+- Due date of an existing item cannot be updated to past date
+- Due date of an existing item can be updated to a future date
+- Completed date should be empty for an item where it's status is changed to DONE to NOT_DONE
+
+
