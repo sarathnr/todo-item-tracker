@@ -22,9 +22,9 @@ public enum TodoStatus {
     public static TodoStatus fromOrdinal(Integer status) {
         Optional<Integer> requested = Optional.ofNullable(status);
         return switch (requested.orElseThrow(() -> new InvalidDataException("Invalid status requested"))) {
-            case 1 -> TodoStatus.NOT_DONE;
-            case 2 -> TodoStatus.DONE;
-            case 3 -> TodoStatus.PAST_DUE;
+            case 0 -> TodoStatus.DONE;
+            case 1 ->  TodoStatus.NOT_DONE;
+            case 2 -> TodoStatus.PAST_DUE;
             default -> throw new InvalidDataException("Invalid status requested");
         };
     }

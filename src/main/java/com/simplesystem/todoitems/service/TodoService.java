@@ -54,8 +54,12 @@ public class TodoService {
 
         checkIsValid(latest);
 
+
         Todo itemFound = todoRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException(String.format("Todo with id  %s  not found", itemId)));
+
+        if(hasPastDue(itemFound.getStatus()))
+            throw new InvalidDataException(String.format("Cannot modify item id %s as it is expired", itemId));
 
         Todo updatedItem = mapUpdates(latest, itemFound);
 
