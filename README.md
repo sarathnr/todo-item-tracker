@@ -28,7 +28,7 @@ docker-compose up
 ```
 
 ### API documentation
-The API documentation can be found under `/openapi` directory in the project. It is generated using OpenAPI.
+The API documentation can be found under `/openapi/openapi.yml` directory in the project. It is generated using OpenAPI.
 After starting the service, the swagger UI can be accessed at following URL 
 ```
 http://localhost:8080/swagger-ui/index.html
