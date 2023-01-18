@@ -9,7 +9,6 @@ import com.simplesystem.todoitems.exception.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +26,13 @@ public class TodoService {
     }
 
     public Todo saveTodo(Todo item) {
+
+        checkIsValid(item);
+
+        return save(item);
+    }
+
+    private Todo save(Todo item) {
         return todoRepository.save(item);
     }
 
@@ -39,7 +45,8 @@ public class TodoService {
         }
         return all;
     }
-    public Todo updateTodo(Long itemId, Todo latest) {
+
+    public Todo updateTodoById(Long itemId, Todo latest) {
 
         checkIsValid(latest);
 
@@ -48,7 +55,7 @@ public class TodoService {
 
         Todo updatedItem = mapUpdates(latest, itemFound);
 
-        return saveTodo(updatedItem);
+        return save(updatedItem);
     }
 
     private void checkIsValid(Todo item) {

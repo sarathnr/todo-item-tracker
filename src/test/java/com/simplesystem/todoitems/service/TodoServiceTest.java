@@ -9,7 +9,6 @@ import com.simplesystem.todoitems.exception.InvalidDateException;
 import com.simplesystem.todoitems.exception.ItemNotFoundException;
 import com.simplesystem.todoitems.helper.Todos;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -56,7 +55,7 @@ class TodoServiceTest {
     void givenExpiredDueDate_whenSave_thenThrowInvalidDateException() {
         Todo pastDueItem = anInvalidItem();
 
-        assertThrows(InvalidDateException.class, () -> todoService.updateTodo(pastDueItem.getId(),pastDueItem));
+        assertThrows(InvalidDateException.class, () -> todoService.updateTodoById(pastDueItem.getId(),pastDueItem));
 
         verify(todoRepository, never()).save(pastDueItem);
     }
@@ -65,7 +64,7 @@ class TodoServiceTest {
     void givenPastDueItem_whenUpdate_thenThrowInvalidDataException() {
         Todo pastDueItem = pastDueItem();
 
-        assertThrows(InvalidDataException.class, () -> todoService.updateTodo(pastDueItem.getId(),pastDueItem));
+        assertThrows(InvalidDataException.class, () -> todoService.updateTodoById(pastDueItem.getId(),pastDueItem));
 
         verify(todoRepository, never()).save(pastDueItem);
     }
@@ -126,7 +125,7 @@ class TodoServiceTest {
         Long invalidId = -1L;
         Todo item = Todos.anItem();
 
-        assertThrows(ItemNotFoundException.class, () -> todoService.updateTodo(invalidId, item));
+        assertThrows(ItemNotFoundException.class, () -> todoService.updateTodoById(invalidId, item));
 
         verify(todoRepository, never()).save(item);
     }

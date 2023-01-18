@@ -40,5 +40,5 @@ public class Todo {
     private LocalDateTime completedAt;
 
     @Enumerated(EnumType.STRING)
-    private TodoStatus status;
+    private TodoStatus status = TodoStatus.NOT_DONE;
 }

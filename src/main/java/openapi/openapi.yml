@@ -1,0 +1,136 @@
+openapi: 3.0.1
+info:
+  version: '1.0.0'
+  title: SimpleSystem Todo API
+  description: This service contains API(s) to manage todo items
+  contact:
+    name: SimpleSystem
+    email: sarathnambradath@gmail.com
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/v1/todos/{id}:
+    get:
+      tags:
+        - todo-controller
+      summary: Get a Todo by id
+      operationId: findByTodoId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Retrieved a Todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoDto'
+        '400':
+          description: Invalid updates supplied
+        '404':
+          description: Todo not found
+    put:
+      tags:
+        - todo-controller
+      summary: Update a Todo by id
+      operationId: updateTodoById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoDto'
+        required: true
+      responses:
+        '200':
+          description: Returned the updated Todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoDto'
+        '400':
+          description: Invalid updates supplied
+        '404':
+          description: Todo not found
+  /api/v1/todos:
+    get:
+      tags:
+        - todo-controller
+      summary: Find all Todos
+      operationId: findAllIfNotByStatus
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Find all Todos, if not requested with status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoDto'
+        '400':
+          description: Invalid status supplied
+    post:
+      tags:
+        - todo-controller
+      summary: Create a Todo item
+      operationId: saveTodo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoDto'
+        required: true
+      responses:
+        '200':
+          description: Created the Todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoDto'
+        '400':
+          description: Invalid Todo supplied
+        '500':
+          description: Invalid status supplied
+components:
+  schemas:
+    TodoDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        dueDate:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - DONE
+            - NOT_DONE
+            - PAST_DUE

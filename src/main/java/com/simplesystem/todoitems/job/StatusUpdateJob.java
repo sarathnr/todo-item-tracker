@@ -27,7 +27,7 @@ public class StatusUpdateJob {
 
         todoRepository.saveAll(expiredItems);
 
-        log.info("{} items updated with PAST_DUE status - ", expiredItems.stream().count());
+        log.info("{} items updated with PAST_DUE status", expiredItems.stream().count());
         log.info("{} successfully completed.", getClass().getSimpleName());
     }
 }
